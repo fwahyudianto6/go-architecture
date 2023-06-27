@@ -20,7 +20,9 @@ func PatientRegistrationService() patientService {
 	return patientService{}
 }
 
-// implement Registration Service on  handler
+// #region Business Logic Method
+
+// implement Registration Service on handler
 func (p patientService) RegistrationService(req dto.PatientRegistrationRequest) (err error) {
 	if len(req.FirstName) < 4 {
 		return ErrFirstNameLength
@@ -31,3 +33,24 @@ func (p patientService) RegistrationService(req dto.PatientRegistrationRequest) 
 
 	return nil
 }
+
+// implement Patient List Service on handler
+func (p patientService) ListService() (resp []dto.PatientListResponse, err error) {
+	return []dto.PatientListResponse{{
+		PatientId:  "P001",
+		MedicalNo:  "002-000-01-99",
+		FirstName:  "Fajar",
+		MiddleName: "bin",
+		LastName:   "Wahyudianto",
+		Age:        23,
+	}, {
+		PatientId:  "P002",
+		MedicalNo:  "002-000-01-98",
+		FirstName:  "El",
+		MiddleName: "bin",
+		LastName:   "Wahyudi",
+		Age:        13,
+	}}, nil
+}
+
+// #endregion Business Logic Method

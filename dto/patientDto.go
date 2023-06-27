@@ -9,3 +9,13 @@ type PatientRegistrationRequest struct {
 	LastName   string `json:"LastName"`
 	Age        int    `json:"Age"`
 }
+
+//  declare Patient List data [Response] construct
+type PatientListResponse struct {
+	PatientId  string `json:"PatientId"`
+	MedicalNo  string `json:"MedicalNo"`
+	FirstName  string `json:"FirstName"`
+	MiddleName string `json:"MiddleName"`
+	LastName   string `json:"LastName"`
+	Age        int    `json:"Age"`
+}

@@ -14,6 +14,7 @@ func main() {
 	patientHandler := handler.PatientRegistrationHandler(patientSvc)
 
 	http.HandleFunc("/patients/add", patientHandler.Registration)
+	http.HandleFunc("/patients/list", patientHandler.List)
 
 	log.Println("Server Running at port 9090")
 	http.ListenAndServe(":9090", nil)

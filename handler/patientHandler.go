@@ -9,6 +9,7 @@ import (
 // access Patient Service
 type patientService interface {
 	RegistrationService(req dto.PatientRegistrationRequest) (err error)
+	ListService() (patients []dto.PatientListResponse, err error)
 }
 
 // declare Patient Handler construct
@@ -22,6 +23,8 @@ func PatientRegistrationHandler(p_oService patientService) patientHandler {
 		patientSvc: p_oService,
 	}
 }
+
+// #region Business Logic Method
 
 // implement Registration handler
 func (p patientHandler) Registration(rw http.ResponseWriter, r *http.Request) {
@@ -52,6 +55,31 @@ func (p patientHandler) Registration(rw http.ResponseWriter, r *http.Request) {
 		})
 
 	} else {
-		rw.Write([]byte("METHOD NOT ALLOWED"))
+		rw.Write([]byte("Methot No Allowed!"))
 	}
 }
+
+// implement Patient List handler
+func (p patientHandler) List(rw http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		rw.Header().Set("Content-Type", "application/json")
+		patients, err := p.patientSvc.ListService()
+
+		if err != nil {
+			json.NewEncoder(rw).Encode(map[string]interface{}{
+				"success": false,
+				"error":   err.Error(),
+			})
+			return
+		}
+		json.NewEncoder(rw).Encode(map[string]interface{}{
+			"success": true,
+			"message": "Patient List success",
+			"data":    patients,
+		})
+	} else {
+		rw.Write([]byte("Methot No Allowed!"))
+	}
+}
+
+// #endregion Business Logic Method
