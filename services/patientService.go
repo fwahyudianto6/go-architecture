@@ -3,21 +3,32 @@ package services
 import (
 	"errors"
 	"go-architecture/dto"
+	"go-architecture/entity"
+	"log"
 )
 
 // declare validate length
 var (
-	ErrFirstNameLength  = errors.New("patient first name minimum 4 length")
-	ErrMiddleNameLength = errors.New("patient middle name minimum 3 length")
+	ErrFirstNameLength  = errors.New("patient First Name minimum 4 length")
+	ErrMiddleNameLength = errors.New("patient Middle Name minimum 3 length")
+	ErrLastNameLength   = errors.New("patient Last Name minimum 3 length")
 )
+
+// access Patient Repository
+type patientRepository interface {
+	RegistrationRepo(patient entity.Patient) (p_strPatientId string, err error)
+}
 
 // declare Patient Service construct
 type patientService struct {
+	repo patientRepository
 }
 
 // declare Patient Registration Service
-func PatientRegistrationService() patientService {
-	return patientService{}
+func PatientRegistrationService(p_oRepo patientRepository) patientService {
+	return patientService{
+		repo: p_oRepo,
+	}
 }
 
 // #region Business Logic Method
@@ -31,6 +42,13 @@ func (p patientService) RegistrationService(req dto.PatientRegistrationRequest) 
 		return ErrMiddleNameLength
 	}
 
+	id, err := p.repo.RegistrationRepo(req.ParseToEntity())
+	if err != nil {
+		return
+	}
+
+	log.Printf("Patient Registraton [%s] successfully!\n", id)
+
 	return nil
 }
 
@@ -42,6 +60,7 @@ func (p patientService) ListService() (resp []dto.PatientListResponse, err error
 		FirstName:  "Fajar",
 		MiddleName: "bin",
 		LastName:   "Wahyudianto",
+		IsVoid:     false,
 		Age:        23,
 	}, {
 		PatientId:  "P002",
@@ -49,6 +68,7 @@ func (p patientService) ListService() (resp []dto.PatientListResponse, err error
 		FirstName:  "El",
 		MiddleName: "bin",
 		LastName:   "Wahyudi",
+		IsVoid:     false,
 		Age:        13,
 	}}, nil
 }
