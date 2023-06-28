@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"go-architecture/handler"
+	"go-architecture/pkg/databases"
+	"go-architecture/repository"
 	"go-architecture/services"
 	"log"
 	"net/http"
@@ -10,7 +12,31 @@ import (
 )
 
 func main() {
-	patientSvc := services.PatientRegistrationService()
+	// init Connection Database
+	db, err := databases.ConnectPostgres(databases.Postgres{
+		Host:     "host",
+		Port:     "5432",
+		User:     "user",
+		Password: "password",
+		DBName:   "dbname",
+		SSLMode:  "disable",
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if db == nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Database Postgree Connected")
+
+	// init Patient Repository
+	patientRepo := repository.PatientRegistrationRepo(db)
+
+	// init Patient Service
+	patientSvc := services.PatientRegistrationService(patientRepo)
 	patientHandler := handler.PatientRegistrationHandler(patientSvc)
 
 	http.HandleFunc("/patients/add", patientHandler.Registration)
